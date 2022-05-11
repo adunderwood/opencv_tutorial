@@ -14,6 +14,7 @@
     "opencv4nodejs": "^5.6.0",
     "opencvBinDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/bin",
     "opencvIncludeDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/include",
-    "opencvLibDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/lib/"
+    "opencvLibDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/lib/",
+    "uuid": "^8.3.2"
   }
 }
