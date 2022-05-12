@@ -24,43 +24,29 @@ var params=function(req){
   return result;
 }
 
+var url_params;
 const server = http.createServer((req, res) => {
   req.params=params(req);
-
+  url_params = req.params;
   console.log(req.params.img);
 
   if (req.params.img) {
     downloadImage(req.params.img, uuidv4(), res);
   }
 
-  //res.statusCode = 200;
-  //res.setHeader('Content-Type', 'text/plain');
-  //res.end(req.params.img);
 });
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-var img = 'https://alanunderwood.com/flowers/images/ixora-blue-3.jpg';
-img= "https://i.imgur.com/LDBIll.jpg"
-img = "https://i.imgur.com/Wr5NBl.jpg"
-img = "https://i.imgur.com/Ilq4ll.jpg" //fb guy
-img ="https://i.imgur.com/YTVCBl.jpg"
-img = "https://i.imgur.com/YkE54l.jpg" // eyebleach
-img = "https://i.imgur.com/RW71Ll.jpg" // mclaren
-img = "https://i.imgur.com/uDnZRl.jpg" // vagina
-img = "https://i.imgur.com/nL3TQl.jpg" // sign
-img = "https://i.imgur.com/W3PTGl.jpg" // shirt
-img = "https://i.imgur.com/6gBgql.jpg" // bird
-
 function analyze_image(filepath, res) {
 
-console.log("Analyzing image")
-console.log(filepath)
+  console.log("Analyzing image")
+  console.log(filepath);
 
   const img = cv.imread(filepath);
-//  console.log('%s: ', data.label);
+  //  console.log('%s: ', data.label);
   const predictions = classifyImg(img);
   predictions.forEach(p => console.log(p));
   console.log();
@@ -78,34 +64,27 @@ console.log(filepath)
   });
 
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end(predStr);
+  res.setHeader('Content-Type', 'text/html');
+
+  var img_tag = '<img src="' + url_params.img + '">';
+  res.end("<h4>" + predStr + "</h4>" + img_tag);
 
 }
-
 
 async function downloadImage(url, filepath, res) {
-axios.get(encodeURI(url), {responseType: "stream"} )  
-.then(response => {  
+axios.get(encodeURI(url), {responseType: "stream"} )
+  .then(response => {
 
-filepath = "tmp/" + filepath;
-response.data.pipe(fs.createWriteStream(filepath))
- .on('error', () => {
+  filepath = "./tmp/" + filepath;
+  response.data.pipe(fs.createWriteStream(filepath))
+    .on('error', () => {
     // log error and process 
-  })
-  .on('finish', () => {
-    analyze_image(filepath, res)
+    })
+    .on('finish', () => {
+      analyze_image(filepath, res)
+    });
   });
-
-});
-
 }
-
-
-
-
-
-//console.log(cv)
 
 if (!cv.modules.dnn) {
   throw new Error('exiting: opencv4nodejs compiled without dnn module');
@@ -163,46 +142,3 @@ const classifyImg = (img) => {
 
   return result;
 };
-
-const testData = [
-  {
-    image: './flowers/yellow-sunflower.jpg',
-    label: 'sunflower'
-  },
-  {
-    image: './images/husky.jpg',
-    label: 'husky'
-  },
-  {
-    image: './images/banana.jpg',
-    label: 'banana'
-  },
-  {
-    image: './images/car.jpeg',
-    label: 'car'
-  },
-  {
-    image: './images/Lenna.png',
-    label: 'lenna'
-  }
-];
-/*
-testData.forEach((data) => {
-  const img = cv.imread(data.image);
-  console.log('%s: ', data.label);
-  const predictions = classifyImg(img);
-  predictions.forEach(p => console.log(p));
-  console.log();
-
-  const alpha = 0.4;
-  cv.drawTextBox(
-    img,
-    { x: 0, y: 0 },
-    predictions.map(p => ({ text: p, fontSize: 0.5, thickness: 1 })),
-    alpha
-  );
-//  cv.imshowWait('img', img);
-});
-*/
-
-

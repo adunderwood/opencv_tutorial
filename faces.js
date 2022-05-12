@@ -24,9 +24,11 @@ var params=function(req){
   return result;
 }
 
+var url_params;
 const server = http.createServer((req, res) => {
   req.params=params(req);
 
+  url_params = req.params;
   console.log(req.params.img);
 
   if (req.params.img) {
@@ -76,7 +78,8 @@ var tmp = 0;
 tmp = count;
 
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Type', 'text/html');
+
   res.end("Faces: " + tmp);
 
 }
