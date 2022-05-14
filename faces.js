@@ -72,15 +72,16 @@ output(res, faceCount);
 }
 
 function output(res, count) {
-console.log(count)
 
-var tmp = 0;
-tmp = count;
+  var tmp = 0;
+  tmp = count;
 
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Content-Type', 'text/json');
 
-  res.end("Faces: " + tmp);
+  var output = {}
+  output.faces = tmp;
+  res.end(JSON.stringify(output));
 
 }
 
