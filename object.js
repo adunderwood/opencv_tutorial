@@ -28,7 +28,7 @@ var url_params;
 const server = http.createServer((req, res) => {
   req.params=params(req);
   url_params = req.params;
-  console.log(req.params.img);
+  //console.log(req.params.img);
 
   if (req.params.img) {
     downloadImage(req.params.img, uuidv4(), res);
@@ -49,11 +49,21 @@ function analyze_image(filepath, res) {
   //  console.log('%s: ', data.label);
   const predictions = classifyImg(img);
   predictions.forEach(p => console.log(p));
-  console.log();
+  //console.log();
 
-  var predStr = ""
+  var predStr = "";
+  var aPreds = {};
   for (var i =0; i < predictions.length; i++) {
     predStr += " " + predictions[i];
+    var tmp = predictions[i];
+    tmp = tmp.replace(")","");
+
+    var aTmp = tmp.split(" (");
+    var key = aTmp[0];
+        key = key.replace(" ", "_");
+    var val = parseFloat(aTmp[1]);
+
+    aPreds[key] = (Math.round(val * 10) / 10) * 10;
   }
 
   fs.unlink(filepath, (err) => {
@@ -63,11 +73,13 @@ function analyze_image(filepath, res) {
     }
   });
 
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
+  var output = {};
+  output.tags = aPreds;
 
-  var img_tag = '<img src="' + url_params.img + '">';
-  res.end("<h4>" + predStr + "</h4>" + img_tag);
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/json');
+
+  res.end(JSON.stringify(output));
 
 }
 
