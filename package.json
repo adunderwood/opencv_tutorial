@@ -15,6 +15,7 @@
     "opencvBinDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/bin",
     "opencvIncludeDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/include",
     "opencvLibDir": "/root/tensorflow_tutorial/node_modules/opencv-build/opencv/build/lib/",
+    "sharp": "^0.30.4",
     "uuid": "^8.3.2"
   }
 }
