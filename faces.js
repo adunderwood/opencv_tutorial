@@ -56,7 +56,6 @@ var faceCount = 0;
 for (const object of objects) {
 console.log(object)
   faceCount++;
-    //image.drawRectangle(object, new cv.Vec(0, 255, 0), 2, cv.LINE_8);
 }
 
   fs.unlink(filepath, (err) => {
@@ -64,10 +63,10 @@ console.log(object)
       console.error(err)
       return
     }
-
-output(res, faceCount);
-
   });
+
+  output(res, faceCount);
+
 
 }
 

@@ -55,6 +55,20 @@ axios.get(encodeURI(url), {responseType: "stream"} )
   });
 }
 
+function getFileSize(file) {
+  var ret = 0;
+  try {
+    const stats = fs.statSync(file);
+    ret = stats.size / 1000; // size in kilobytes
+
+    ret = Math.round(ret)
+  } catch (err) {
+    console.log(err);
+  }
+
+  return ret
+}
+
 async function getMetaData(file, res) {
   try {
 
@@ -64,7 +78,9 @@ async function getMetaData(file, res) {
     // file.meta = metadata;
 
     var meta = {}
-    if (metadata.format) {
+     meta.filesize = getFileSize(file);
+
+     if (metadata.format) {
       meta.format = metadata.format;
     }
     meta.dpi = metadata.density;
@@ -75,8 +91,8 @@ async function getMetaData(file, res) {
     meta.megapixels = Math.round(mp * 100) / 100;
 
     var qual = "low";
-    if (meta.megapixels > 1) { qual = "medium"; }
-    if (meta.megapixels > 3) { qual = "high"; }
+    if (meta.megapixels >= 1) { qual = "medium"; }
+    if (meta.megapixels >= 2) { qual = "high"; }
 
     meta.quality = qual;
     meta.alpha = metadata.hasAlpha;

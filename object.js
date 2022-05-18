@@ -45,14 +45,19 @@ function analyze_image(filepath, res) {
   console.log("Analyzing image")
   console.log(filepath);
 
+  var aPreds = {};
+  var predStr = "";
+
+  if (filepath) {
+
+  try {
+
   const img = cv.imread(filepath);
   //  console.log('%s: ', data.label);
   const predictions = classifyImg(img);
   predictions.forEach(p => console.log(p));
   //console.log();
 
-  var predStr = "";
-  var aPreds = {};
   for (var i =0; i < predictions.length; i++) {
     predStr += " " + predictions[i];
     var tmp = predictions[i];
@@ -65,13 +70,11 @@ function analyze_image(filepath, res) {
 
     aPreds[key] = (Math.round(val * 10) / 10) * 10;
   }
+  } catch (error) {
+    console.log(error);
+  }
 
-  fs.unlink(filepath, (err) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  });
+  }
 
   var output = {};
   output.tags = aPreds;
@@ -80,6 +83,14 @@ function analyze_image(filepath, res) {
   res.setHeader('Content-Type', 'text/json');
 
   res.end(JSON.stringify(output));
+
+  fs.unlink(filepath, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  });
+
 
 }
 

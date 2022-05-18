@@ -162,6 +162,13 @@ async function getMetaData(file, res) {
   var output = {};
   output.colors = colors;
 
+  // delete file
+  fs.unlink(file, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  });
 
   // try to attach meta data, if not, just send what you got
   sendData(output, res);
@@ -170,14 +177,6 @@ async function getMetaData(file, res) {
 
 function sendData(file, res) {
 
-  // delete file
-/*  fs.unlink(file, (err) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  });
-*/
   res.writeHead(200);
 
   floutput = JSON.stringify(file)
