@@ -52,24 +52,24 @@ function analyze_image(filepath, res) {
 
   try {
 
-  const img = cv.imread(filepath);
-  //  console.log('%s: ', data.label);
-  const predictions = classifyImg(img);
-  predictions.forEach(p => console.log(p));
-  //console.log();
+    const img = cv.imread(filepath);
+    //  console.log('%s: ', data.label);
+    const predictions = classifyImg(img);
+    predictions.forEach(p => console.log(p));
+    //console.log();
 
-  for (var i =0; i < predictions.length; i++) {
-    predStr += " " + predictions[i];
-    var tmp = predictions[i];
-    tmp = tmp.replace(")","");
+    for (var i =0; i < predictions.length; i++) {
+      predStr += " " + predictions[i];
+      var tmp = predictions[i];
+      tmp = tmp.replace(")","");
 
-    var aTmp = tmp.split(" (");
-    var key = aTmp[0];
-        key = key.replace(" ", "_");
-    var val = parseFloat(aTmp[1]);
+      var aTmp = tmp.split(" (");
+      var key = aTmp[0];
+          key = key.replace(" ", "_");
+      var val = parseFloat(aTmp[1]);
 
-    aPreds[key] = (Math.round(val * 10) / 10) * 10;
-  }
+      aPreds[key] = (Math.round(val * 10) / 10) * 10;
+    }
   } catch (error) {
     console.log(error);
   }

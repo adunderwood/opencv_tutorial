@@ -44,19 +44,27 @@ server.listen(port, hostname, () => {
 
 
 function analyze_image(filepath, res) {
+  if (filepath) {
 
   console.log("Analyzing image")
   console.log(filepath)
 
-  const img = cv.imread(filepath);
-  const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
-  const { objects, numDetections } = classifier.detectMultiScale(img.bgrToGray());
+  var faceCount = 0;
 
-var faceCount = 0;
-for (const object of objects) {
-console.log(object)
-  faceCount++;
-}
+  try {
+    const img = cv.imread(filepath);
+    const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
+    const { objects, numDetections } = classifier.detectMultiScale(img.bgrToGray());
+
+    for (const object of objects) {
+      console.log(object)
+      faceCount++;
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
+  output(res, faceCount);
 
   fs.unlink(filepath, (err) => {
     if (err) {
@@ -65,9 +73,7 @@ console.log(object)
     }
   });
 
-  output(res, faceCount);
-
-
+  }
 }
 
 function output(res, count) {
