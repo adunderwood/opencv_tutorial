@@ -68,7 +68,8 @@ function analyze_image(filepath, res) {
           key = key.replace(" ", "_");
       var val = parseFloat(aTmp[1]);
 
-      aPreds[key] = (Math.round(val * 10) / 10) * 10;
+      //aPreds[key] = (Math.round(val * 10) / 10) * 10;
+      aPreds[key] = (Math.ceil(val * 100) / 100) * 100;
     }
   } catch (error) {
     console.log(error);

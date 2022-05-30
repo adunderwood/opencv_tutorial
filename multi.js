@@ -160,7 +160,8 @@ function analyze_image(filepath, res) {
       pred.object = p.className;
       //pred.confidence = Math.round(p.confidence * 100) / 100;
 
-      pred.confidence = (Math.round(p.confidence * 10) / 10) * 10;
+      //pred.confidence = (Math.round(p.confidence * 10) / 10) * 10;
+      pred.confidence = (Math.ceil(p.confidence * 100) / 100) * 100;
 
       aPreds.push(pred);
     }
