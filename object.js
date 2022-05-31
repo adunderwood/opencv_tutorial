@@ -1,98 +1,95 @@
-const cv = require('opencv4nodejs');
-const fs = require('fs');
-const path = require('path');
-const client = require('https');
+const cv = require('opencv4nodejs')
+const fs = require('fs')
+const path = require('path')
+const client = require('https')
 const axios = require('axios')
-const http = require('http');
-const { v4: uuidv4 } = require('uuid');
+const http = require('http')
+const { v4: uuidv4 } = require('uuid')
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const hostname = '127.0.0.1'
+const port = 3000
 
 // get querystring parameters
 var params=function(req){
-  let q=req.url.split('?'),result={};
+  let q=req.url.split('?'),result={}
   if(q.length>=2){
       q[1].split('&').forEach((item)=>{
            try {
-             result[item.split('=')[0]]=item.split('=')[1];
+             result[item.split('=')[0]]=item.split('=')[1]
            } catch (e) {
-             result[item.split('=')[0]]='';
+             result[item.split('=')[0]]=''
            }
       })
   }
-  return result;
+  return result
 }
 
-var url_params;
+var url_params
 const server = http.createServer((req, res) => {
-  req.params=params(req);
-  url_params = req.params;
-  //console.log(req.params.img);
+  req.params=params(req)
+  url_params = req.params
+  //console.log(req.params.img)
 
   if (req.params.img) {
-    downloadImage(req.params.img, uuidv4(), res);
+    downloadImage(req.params.img, uuidv4(), res)
   }
 
-});
+})
 
 server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+  console.log(`Server running at http://${hostname}:${port}/`)
+})
 
 function analyze_image(filepath, res) {
 
   console.log("Analyzing image")
-  console.log(filepath);
+  console.log(filepath)
 
-  var aPreds = {};
-  var predStr = "";
+  var aPreds = {}
+  var predStr = ""
 
   if (filepath) {
 
   try {
 
-    const img = cv.imread(filepath);
-    //  console.log('%s: ', data.label);
-    const predictions = classifyImg(img);
-    predictions.forEach(p => console.log(p));
-    //console.log();
+    const img = cv.imread(filepath)
+    //  console.log('%s: ', data.label)
+    const predictions = classifyImg(img)
+    predictions.forEach(p => console.log(p))
+    //console.log()
 
     for (var i =0; i < predictions.length; i++) {
-      predStr += " " + predictions[i];
-      var tmp = predictions[i];
-      tmp = tmp.replace(")","");
+      predStr += " " + predictions[i]
+      var tmp = predictions[i]
+      tmp = tmp.replace(")","")
 
-      var aTmp = tmp.split(" (");
-      var key = aTmp[0];
-          key = key.replace(" ", "_");
-      var val = parseFloat(aTmp[1]);
+      var aTmp = tmp.split(" (")
+      var key = aTmp[0]
+          key = key.replace(" ", "_")
+      var val = parseFloat(aTmp[1])
 
-      //aPreds[key] = (Math.round(val * 10) / 10) * 10;
-      aPreds[key] = (Math.ceil(val * 100) / 100) * 100;
+      //aPreds[key] = (Math.round(val * 10) / 10) * 10
+      aPreds[key] = (Math.round(val * 100) / 100) * 100
+      }
+    } catch (error) {
+      console.log(error)
     }
-  } catch (error) {
-    console.log(error);
   }
 
-  }
+  var output = {}
+  output.tags = aPreds
 
-  var output = {};
-  output.tags = aPreds;
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'text/json')
 
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/json');
-
-  res.end(JSON.stringify(output));
+  res.end(JSON.stringify(output))
 
   fs.unlink(filepath, (err) => {
     if (err) {
       console.error(err)
       return
     }
-  });
-
-
+  })
 }
 
 async function downloadImage(url, filepath, res) {
