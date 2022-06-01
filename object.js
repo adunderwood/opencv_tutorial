@@ -32,8 +32,10 @@ const server = http.createServer((req, res) => {
 
   if (req.params.img) {
     downloadImage(req.params.img, uuidv4(), res)
+  } else {
+    var fail = {}
+    res.end(fail)
   }
-
 })
 
 server.listen(port, hostname, () => {
@@ -69,7 +71,7 @@ function analyze_image(filepath, res) {
       var val = parseFloat(aTmp[1])
 
       //aPreds[key] = (Math.round(val * 10) / 10) * 10
-      aPreds[key] = (Math.round(val * 100) / 100) * 100
+      aPreds[key] = Math.ceil(((val * 100) / 100) * 100)
       }
     } catch (error) {
       console.log(error)

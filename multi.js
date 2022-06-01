@@ -11,17 +11,17 @@ const port = 8000;
 
 // get querystring parameters
 var params=function(req){
-  let q=req.url.split('?'),result={};
+  let q=req.url.split('?'),result={}
   if(q.length>=2){
       q[1].split('&').forEach((item)=>{
            try {
-             result[item.split('=')[0]]=item.split('=')[1];
+             result[item.split('=')[0]]=item.split('=')[1]
            } catch (e) {
-             result[item.split('=')[0]]='';
+             result[item.split('=')[0]]=''
            }
       })
   }
-  return result;
+  return result
 }
 
 var url_params;
@@ -32,14 +32,17 @@ const server = http.createServer((req, res) => {
 
   if (req.params.img) {
     downloadImage(req.params.img, uuidv4(), res);
+  } else {
+    var fail = {}
+    res.end(fail)
   }
 
-});
+})
 
 // start server
 server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+  console.log(`Server running at http://${hostname}:${port}/`)
+})
 
 
 const classNames = [
@@ -148,22 +151,22 @@ function analyze_image(filepath, res) {
 
   try {
 
-  const img = cv.imread(filepath)
-  const predictions = classifyImg(img)
+    const img = cv.imread(filepath)
+    const predictions = classifyImg(img)
 
-  for (var i = 0; i < predictions.length; i++) {
-    var p = predictions[i]
-    if (p.confidence >= .1) {
-      var pred = {}
+    for (var i = 0; i < predictions.length; i++) {
+      var p = predictions[i]
+      if (p.confidence >= .1) {
+        var pred = {}
 
-      pred.object = p.className
-      //pred.confidence = Math.round(p.confidence * 100) / 100;
-      //pred.confidence = (Math.round(p.confidence * 10) / 10) * 10;
-      pred.confidence = (Math.round(p.confidence * 100) / 100) * 100
+        pred.object = p.className
+        //pred.confidence = Math.round(p.confidence * 100) / 100;
+        //pred.confidence = (Math.round(p.confidence * 10) / 10) * 10;
+        pred.confidence = (Math.ceil(p.confidence * 100) / 100) * 100
 
-      aPreds.push(pred)
+        aPreds.push(pred)
+      }
     }
-  }
   } catch (error) {
     console.log(error)
   }
@@ -194,6 +197,8 @@ axios.get(encodeURI(url), {responseType: "stream"} )
   response.data.pipe(fs.createWriteStream(filepath))
     .on('error', () => {
     // log error and process
+      var fail = {}
+      res.end(fail)
     })
     .on('finish', () => {
       analyze_image(filepath, res)
